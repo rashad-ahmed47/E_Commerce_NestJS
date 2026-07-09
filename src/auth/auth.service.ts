@@ -1,15 +1,17 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { UserRepo } from '../common/Repo/user.repo';
 import { SecurityService } from '../common/Security/security.service';
-import { User } from '../DB/schema/user.schema';
+import { CreateUserDTO } from './dto/createUser.dto';
+import { EmailService } from '../common/email/email.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userRepo: UserRepo,
     private readonly securityService: SecurityService,
+    private readonly emailService: EmailService,
   ) {}
-  async signUp(userData: User) {
+  async signUp(userData: CreateUserDTO) {
     const { email, password, age, gender, phone, username } = userData;
     const isEmailExist = await this.userRepo.findByEmail(email);
     const isUsernameUnique = await this.userRepo.findByUsername(username);
@@ -27,6 +29,7 @@ export class AuthService {
       gender,
       phone: await this.securityService.encryption({ data: phone }),
     });
+    await this.emailService.sendRegisterOtp(email);
     return { data: { user } };
   }
 }

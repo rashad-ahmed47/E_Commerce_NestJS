@@ -9,7 +9,7 @@ export enum Provider {
 }
 
 export enum OTP {
-  register,
+  Register,
 }
 
 export enum Role {

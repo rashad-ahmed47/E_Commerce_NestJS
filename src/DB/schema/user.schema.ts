@@ -75,19 +75,17 @@ export class User {
   @Prop({
     code: {
       type: String,
-      required: true,
+      required: false,
       minlength: 6,
       maxlength: 6,
     },
     expires: {
       type: Date,
-      min: Date.now(),
-      max: new Date(Date.now() + 10 * 60 * 1000),
-      required: true,
+      required: false,
     },
     type: {
       type: Number,
-      default: OTP.register,
+      default: OTP.Register,
       enum: OTP,
     },
   })

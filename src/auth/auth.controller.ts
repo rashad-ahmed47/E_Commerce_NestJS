@@ -1,17 +1,17 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { AppService } from '../app.service';
+import { Body, Controller, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { User } from '../DB/schema/user.schema';
+import { CreateUserDTO } from './dto/createUser.dto';
+import { CustomValidatePipe } from './pipes/validation.pipe';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly appService: AppService,
   ) {}
 
   @Post('signup')
-  async signUp(@Body() userData: User) {
+  @UsePipes(new ValidationPipe({ whitelist: true }), CustomValidatePipe)
+  async signUp(@Body() userData: CreateUserDTO) {
     return await this.authService.signUp(userData);
   }
 }

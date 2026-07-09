@@ -7,9 +7,12 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { userModel } from './DB/schema/user.schema';
 
 @Module({
-  imports: [AuthModule, MongooseModule.forRoot('mongodb://localhost/nest')],
+  imports: [
+    AuthModule,
+    MongooseModule.forRoot('mongodb://localhost/nest'),
+    userModel,
+  ],
   controllers: [AppController],
   providers: [AppService],
-  exports:[userModel]
 })
 export class AppModule {}
