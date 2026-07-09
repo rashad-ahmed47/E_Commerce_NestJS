@@ -7,7 +7,6 @@ export class AppController {
 
   @Get('api')
   getHelloo(@Query() query: any): string {
-    console.log({ query });
-    return this.appService.getHello();
+    return 'hello';
   }
 }
