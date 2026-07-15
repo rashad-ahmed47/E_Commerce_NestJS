@@ -1,6 +1,6 @@
 import { MongooseModule, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import { Gender, OTP, Provider, Role } from '../../common/enums/user.enum';
+import { Gender, OTP, Provider, Role } from '../enums/user.enum';
 
 export type IHUser = HydratedDocument<User>;
 
@@ -47,7 +47,7 @@ export class User {
   age!: number;
 
   @Prop({
-    type: Number,
+    type: String,
     enum: Gender,
   })
   gender!: Gender;
@@ -116,6 +116,25 @@ export class User {
     default: Role.User,
   })
   role!: Role;
+
+  @Prop({ type: String })
+  ip!: string;
+
+  @Prop({
+    type: {
+      country: { type: String },
+      region: { type: String },
+      city: { type: String },
+      timezone: { type: String },
+    },
+    _id: false,
+  })
+  location!: {
+    country: string;
+    region: string;
+    city: string;
+    timezone: string;
+  };
 }
 
 export const userSchema = SchemaFactory.createForClass(User);

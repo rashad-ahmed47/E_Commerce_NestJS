@@ -1,0 +1,165 @@
+{
+	"info": {
+		"_postman_id": "7a3bdf08-d2e8-46cb-8b5e-85b5d1e21b76",
+		"name": "NestJS Auth & Redis API",
+		"description": "A collection of API endpoints for the NestJS E-Commerce/Auth service. Handles user signup, login (automatically saving access and refresh tokens), profile fetching with authorization, and hello api testing.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Sign Up",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"test_user\",\n  \"email\": \"test_user@example.com\",\n  \"password\": \"securepassword123\",\n  \"confirmedPassword\": \"securepassword123\",\n  \"phone\": \"+1234567890\",\n  \"age\": 25,\n  \"gender\": \"M\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/signup",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"signup"
+							]
+						},
+						"description": "Register a new user in the system. Triggers password hashing, phone encryption, geo-location checks, and registration OTP email sending."
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Parse response JSON",
+									"var response = pm.response.json();",
+									"",
+									"// Verify dynamic tokens and store them as collection variables",
+									"if (response && response.data) {",
+									"    if (response.data.accessToken) {",
+									"        pm.collectionVariables.set(\"accessToken\", response.data.accessToken);",
+									"        console.log(\"Access Token successfully saved to variables.\");",
+									"    }",
+									"    if (response.data.refreshToken) {",
+									"        pm.collectionVariables.set(\"refreshToken\", response.data.refreshToken);",
+									"        console.log(\"Refresh Token successfully saved to variables.\");",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"identifier\": \"test_user@example.com\",\n  \"password\": \"securepassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Authenticate user. Validates username or email + password, issues JTI, stores JTI in Redis (key structure: token:email:jti), and generates JWT access/refresh tokens."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{accessToken}}",
+								"description": "Passes the raw access token directly as the Authorization header (Backend does not expect 'Bearer ' prefix).",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/auth/profile",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"profile"
+							]
+						},
+						"description": "Fetch user profile. Guarded by authGuard: decodes JWT token, extracts JTI, and checks Redis key existence to ensure the session is active and not revoked/expired."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "General",
+			"item": [
+				{
+					"name": "Hello API",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/hello/api",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"hello",
+								"api"
+							]
+						},
+						"description": "A simple public endpoint to verify application readiness."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3001",
+			"type": "string"
+		},
+		{
+			"key": "accessToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "refreshToken",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

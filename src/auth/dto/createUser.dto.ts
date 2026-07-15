@@ -1,5 +1,12 @@
-import { IsEmail, IsEnum, IsNumber, IsOptional, IsString, MinLength } from 'class-validator';
-import { Gender } from '../../common/enums/user.enum';
+import {
+  IsEmail,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  MinLength,
+} from 'class-validator';
+import { Gender } from '../../DB/enums/user.enum';
 
 export class CreateUserDTO {
   @IsString()

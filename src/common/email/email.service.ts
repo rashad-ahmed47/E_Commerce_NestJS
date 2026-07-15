@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import nodemailer from 'nodemailer';
 import { UserRepo } from '../Repo/user.repo';
-import { OTP } from '../enums/user.enum';
+import { OTP } from '../../DB/enums/user.enum';
 
 @Injectable()
 export class EmailService {

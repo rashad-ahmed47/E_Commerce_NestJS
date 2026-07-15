@@ -21,10 +21,13 @@ if (fs.existsSync(envPath)) {
 
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  const Port = parseInt(String(process.env.PORT), 10) || 3000;
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  // Trust proxy headers (e.g. X-Forwarded-For from Nginx, Cloudflare, etc.)
+  app.set('trust proxy', true);
+  const Port = parseInt(String(process.env.PORT), 10) || 3010;
   await app.listen(Port);
   console.log(`app running on port ${Port}`);
 }
